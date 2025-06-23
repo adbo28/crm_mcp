@@ -53,7 +53,7 @@ class EntityCache:
             'contact': {'endpoint': 'contacts', 'name_field': 'fullname'},
             'user': {'endpoint': 'systemusers', 'name_field': 'fullname'},
             'division': {'endpoint': 'businessunits', 'name_field': 'name'},
-            'service': {'endpoint': 'actum_proposedservices', 'name_field': 'actum_name'}
+            'service': {'endpoint': 'company_proposedservices', 'name_field': 'company_name'}
         }
         
         if entity_type not in entity_configs:
@@ -229,7 +229,7 @@ class CRMClient:
     def _clean_opportunity_data(self, opportunity):
         """Clean up opportunity data by removing non-human-readable fields"""
         fields_to_remove = [
-            '_ownerid_value', '_customerid_value', '_actum_divisionid_value',
+            '_ownerid_value', '_customerid_value', '_company_divisionid_value',
             '_transactioncurrencyid_value', '@odata.etag', 'opportunityid'
         ]
         
@@ -261,14 +261,14 @@ class CRMClient:
         if division:
             division_id = self.entity_cache.reverse_lookup('division', division)
             if division_id:
-                filter_conditions.append(f"_actum_divisionid_value eq '{division_id}'")
+                filter_conditions.append(f"_company_divisionid_value eq '{division_id}'")
                 logging.info(f"Filtered by division: '{division}' -> {division_id}")
             else:
                 logging.warning(f"Division '{division}' not found - ignoring filter")
         
         params = {
             '$filter': ' and '.join(filter_conditions),
-            '$select': 'createdon,name,stepname,modifiedon,_actum_divisionid_value,_ownerid_value,estimatedvalue_base,estimatedclosedate,_customerid_value',
+            '$select': 'createdon,name,stepname,modifiedon,_company_divisionid_value,_ownerid_value,estimatedvalue_base,estimatedclosedate,_customerid_value',
             '$orderby': 'createdon desc',
             '$top': top
         }
@@ -289,7 +289,7 @@ class CRMClient:
         for opportunity in result.get('value', []):
             opportunity['owner_name'] = self.entity_cache.entity_lookup('user', opportunity.get('_ownerid_value', ''))
             opportunity['customer_name'] = self.entity_cache.get_customer_name(opportunity.get('_customerid_value', ''))
-            opportunity['division_name'] = self.entity_cache.entity_lookup('division', opportunity.get('_actum_divisionid_value', ''))
+            opportunity['division_name'] = self.entity_cache.entity_lookup('division', opportunity.get('_company_divisionid_value', ''))
             self._clean_opportunity_data(opportunity)
 
         return result
@@ -410,7 +410,7 @@ if __name__ == '__main__':
         print()
         
         # Test 2: Filter by division name (you'll need to replace with actual division name)
-        print("Test 2: Filter by division name 'Actum Digital' (adjust as needed)")
+        print("Test 2: Filter by division name 'company Digital' (adjust as needed)")
         result2 = crm_client.get_open_opportunities(top=3, division="Division1")
         print("Result:")
         print(format_response(result2, max_length=1000))
