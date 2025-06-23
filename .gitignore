@@ -1,0 +1,4 @@
+/env.bat
+/venv
+/crm_mcp/__pycache__
+/crm_mcp/crm_entity_cache.json
