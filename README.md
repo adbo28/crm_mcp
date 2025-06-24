@@ -9,6 +9,15 @@ A Model Context Protocol (MCP) server that provides read-only access to Microsof
 - **Human-Readable**: Converts IDs to names (owners, customers, divisions)
 - **Secure**: Authentication via Azure AD
 
+## Examples
+
+Use it to prepare for a meeting.
+![image](crm_mcp_20250624_screen1_ano.png)
+
+Display an overview of opportunities in a chart.
+![image](crm_mcp_20250624_screen2_ano.png)
+
+
 ## Quick Start
 
 1. **Install dependencies:**
